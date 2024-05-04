@@ -49,9 +49,9 @@ const WeatherForm: React.FC<Props> = ({ onSubmit }) => {
   }, [selectedCountryIsoCode]);
 
   useEffect(() => {
-    if (!existStates){
-        setCities(City.getCitiesOfCountry(selectedCountryIsoCode) as ICity[]);
-        return;
+    if (!existStates) {
+      setCities(City.getCitiesOfCountry(selectedCountryIsoCode) as ICity[]);
+      return;
     }
 
     if (selectedStateIsoCode) {
@@ -174,7 +174,19 @@ const WeatherForm: React.FC<Props> = ({ onSubmit }) => {
           onChange={(e) => setEndDate(e.target.value)}
         />
       </div>
-      <button type="submit">Show Temperature</button>
+      <button
+        type="submit"
+        disabled={
+          !(
+            longitude !== 0 &&
+            latitude !== 0 &&
+            startDate !== "" &&
+            endDate !== ""
+          )
+        }
+      >
+        Show Temperature
+      </button>
     </form>
   );
 };
