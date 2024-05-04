@@ -7,12 +7,13 @@ interface TemperatureData {
     temperature_2m: number[];
 }
 
+const OPEN_METEO_URL='https://ensemble-api.open-meteo.com/v1/ensemble';
+
 const WeatherContainer: React.FC = () => {
     const [temperatureData, setTemperatureData] = useState<TemperatureData | null>(null);
 
-    const handleFormSubmit = async (country: string, city: string, startDate: string, endDate: string) => {
-        // Assuming you have an API endpoint that accepts these parameters
-        const url = `https://ensemble-api.open-meteo.com/v1/ensemble?latitude=52.52&longitude=13.41&hourly=temperature_2m&models=icon_seamless`;
+    const handleFormSubmit = async (longitude: number, latitude: number, startDate: string, endDate: string) => {
+        const url = `${OPEN_METEO_URL}?latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m&start_date=${startDate}&end_date=${endDate}&models=icon_seamless`;
         const response = await fetch(url);
         const data = await response.json();
         setTemperatureData({

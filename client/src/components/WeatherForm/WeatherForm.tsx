@@ -1,92 +1,167 @@
 // src/components/TemperatureForm.tsx
-import React, { useState, useEffect } from 'react';
-import Select from 'react-select';
-import { ICountry, ICity, Country, City } from 'country-state-city';
+import React, { useState, useEffect } from "react";
+import Select from "react-select";
+import {
+  ICountry,
+  IState,
+  ICity,
+  Country,
+  State,
+  City,
+} from "country-state-city";
 
 interface Props {
-    onSubmit: (country: string, city: string, startDate: string, endDate: string) => void;
+  onSubmit: (
+    longitude: number,
+    latitude: number,
+    startDate: string,
+    endDate: string
+  ) => void;
 }
 
 const WeatherForm: React.FC<Props> = ({ onSubmit }) => {
-    const [countries, setCountries] = useState<ICountry[]>([]);
-    const [cities, setCities] = useState<ICity[]>([]);
-    const [selectedCountry, setSelectedCountry] = useState<string>('');
-    const [selectedCity, setSelectedCity] = useState<string>('');
-    const [startDate, setStartDate] = useState('');
-    const [endDate, setEndDate] = useState('');
+  const [countries, setCountries] = useState<ICountry[]>([]);
+  const [states, setStates] = useState<IState[]>([]);
+  const [cities, setCities] = useState<ICity[]>([]);
+  const [selectedCountry, setSelectedCountry] = useState<string>("");
+  const [selectedState, setSelectedState] = useState<string>("");
+  const [selectedCountryIsoCode, setSelectedCountryIsoCode] =
+    useState<string>("");
+  const [selectedStateIsoCode, setSelectedStateIsoCode] = useState<string>("");
+  const [selectedCity, setSelectedCity] = useState<string>("");
+  const [longitude, setLongitude] = useState<number>(0);
+  const [latitude, setLatitude] = useState<number>(0);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
-    useEffect(() => {
-        setCountries(Country.getAllCountries());
-    }, []);
+  useEffect(() => {
+    setCountries(Country.getAllCountries());
+  }, []);
 
-    useEffect(() => {
-        if (selectedCountry) {
-            setCities(City.getCitiesOfCountry(selectedCountry) as ICity[]);
-        }
-    }, [selectedCountry]);
+  useEffect(() => {
+    if (selectedCountryIsoCode) {
+      setStates(State.getStatesOfCountry(selectedCountryIsoCode) as IState[]);
+    }
+  }, [selectedCountryIsoCode]);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const handleCountryChange = (option: any) => {
-        setSelectedCountry(option.value);
-        setSelectedCity(''); // Reset city when country changes
-    };
+  useEffect(() => {
+    if (selectedStateIsoCode) {
+      setCities(
+        City.getCitiesOfState(
+          selectedCountryIsoCode,
+          selectedStateIsoCode
+        ) as ICity[]
+      );
+    }
+  }, [selectedStateIsoCode, selectedCountryIsoCode]);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const handleCityChange = (option: any) => {
-        setSelectedCity(option.value);
-    };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleCountryChange = (option: any) => {
+    setSelectedCountry(option.value);
+    setSelectedCountryIsoCode(option.isoCode);
+    setSelectedStateIsoCode("");
+    setSelectedState("");
+    setSelectedCity("");
+  };
 
-    const handleSubmit = (event: React.FormEvent) => {
-        event.preventDefault();
-        onSubmit(selectedCountry, selectedCity, startDate, endDate);
-    };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleStateChange = (option: any) => {
+    setSelectedState(option.value);
+    setSelectedStateIsoCode(option.isoCode);
+    setLatitude(option.latitude);
+    setLongitude(option.longitude);
+    setSelectedCity("");
+  };
 
-    return (
-        <form onSubmit={handleSubmit}>
-            <div>
-                <label htmlFor="country">Country:</label>
-                <Select
-                    id="country"
-                    options={countries.map((country) => ({
-                        value: country.isoCode,
-                        label: country.name
-                    }))}
-                    onChange={handleCountryChange}
-                />
-            </div>
-            <div>
-                <label htmlFor="city">City:</label>
-                <Select
-                    id="city"
-                    options={cities.map((city) => ({
-                        value: city.name,
-                        label: city.name
-                    }))}
-                    onChange={handleCityChange}
-                    isDisabled={!selectedCountry}
-                />
-            </div>
-            <div>
-                <label htmlFor="start-date">Start Date:</label>
-                <input
-                    id="start-date"
-                    type="date"
-                    value={startDate}
-                    onChange={e => setStartDate(e.target.value)}
-                />
-            </div>
-            <div>
-                <label htmlFor="end-date">End Date:</label>
-                <input
-                    id="end-date"
-                    type="date"
-                    value={endDate}
-                    onChange={e => setEndDate(e.target.value)}
-                />
-            </div>
-            <button type="submit">Show Temperature</button>
-        </form>
-    );
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleCityChange = (option: any) => {
+    setSelectedCity(option.value);
+    setLatitude(option.latitude);
+    setLongitude(option.longitude);
+  };
+
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    onSubmit(longitude, latitude, startDate, endDate);
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <div>
+        <label htmlFor="country">Country:</label>
+        <Select
+          id="country"
+          options={countries.map((country) => ({
+            value: country.name,
+            label: country.name,
+            isoCode: country.isoCode,
+          }))}
+          value={
+            selectedCountry
+              ? { value: selectedCountry, label: selectedCountry }
+              : null
+          }
+          onChange={handleCountryChange}
+        />
+      </div>
+      <div>
+        <label htmlFor="state">State:</label>
+        <Select
+          id="state"
+          options={states.map((state) => ({
+            value: state.name,
+            label: state.name,
+            isoCode: state.isoCode,
+            latitude: state.latitude,
+            longitude: state.longitude,
+          }))}
+          value={
+            selectedState
+              ? { value: selectedState, label: selectedState }
+              : null
+          }
+          onChange={handleStateChange}
+          isDisabled={!selectedCountry}
+        />
+      </div>
+      <div>
+        <label htmlFor="city">City:</label>
+        <Select
+          id="city"
+          options={cities.map((city) => ({
+            value: city.name,
+            label: city.name,
+            latitude: city.latitude,
+            longitude: city.longitude,
+          }))}
+          value={
+            selectedCity ? { value: selectedCity, label: selectedCity } : null
+          }
+          onChange={handleCityChange}
+          isDisabled={!selectedState}
+        />
+      </div>
+      <div>
+        <label htmlFor="start-date">Start Date:</label>
+        <input
+          id="start-date"
+          type="date"
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
+        />
+      </div>
+      <div>
+        <label htmlFor="end-date">End Date:</label>
+        <input
+          id="end-date"
+          type="date"
+          value={endDate}
+          onChange={(e) => setEndDate(e.target.value)}
+        />
+      </div>
+      <button type="submit">Show Temperature</button>
+    </form>
+  );
 };
 
 export default WeatherForm;
