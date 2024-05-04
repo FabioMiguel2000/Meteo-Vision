@@ -27,6 +27,7 @@ const WeatherForm: React.FC<Props> = ({ onSubmit }) => {
   const [selectedState, setSelectedState] = useState<string>("");
   const [selectedCountryIsoCode, setSelectedCountryIsoCode] =
     useState<string>("");
+  const [existStates, setExistStates] = useState<boolean>(true);
   const [selectedStateIsoCode, setSelectedStateIsoCode] = useState<string>("");
   const [selectedCity, setSelectedCity] = useState<string>("");
   const [longitude, setLongitude] = useState<number>(0);
@@ -41,10 +42,18 @@ const WeatherForm: React.FC<Props> = ({ onSubmit }) => {
   useEffect(() => {
     if (selectedCountryIsoCode) {
       setStates(State.getStatesOfCountry(selectedCountryIsoCode) as IState[]);
+      if (State.getStatesOfCountry(selectedCountryIsoCode).length === 0) {
+        setExistStates(false);
+      }
     }
   }, [selectedCountryIsoCode]);
 
   useEffect(() => {
+    if (!existStates){
+        setCities(City.getCitiesOfCountry(selectedCountryIsoCode) as ICity[]);
+        return;
+    }
+
     if (selectedStateIsoCode) {
       setCities(
         City.getCitiesOfState(
@@ -53,19 +62,23 @@ const WeatherForm: React.FC<Props> = ({ onSubmit }) => {
         ) as ICity[]
       );
     }
-  }, [selectedStateIsoCode, selectedCountryIsoCode]);
+  }, [selectedStateIsoCode, selectedCountryIsoCode, existStates]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleCountryChange = (option: any) => {
     setSelectedCountry(option.value);
     setSelectedCountryIsoCode(option.isoCode);
+    setExistStates(true);
     setSelectedStateIsoCode("");
     setSelectedState("");
     setSelectedCity("");
+    setLatitude(option.latitude);
+    setLongitude(option.longitude);
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleStateChange = (option: any) => {
+    setExistStates(true);
     setSelectedState(option.value);
     setSelectedStateIsoCode(option.isoCode);
     setLatitude(option.latitude);
@@ -95,6 +108,8 @@ const WeatherForm: React.FC<Props> = ({ onSubmit }) => {
             value: country.name,
             label: country.name,
             isoCode: country.isoCode,
+            latitude: country.latitude,
+            longitude: country.longitude,
           }))}
           value={
             selectedCountry
@@ -138,7 +153,7 @@ const WeatherForm: React.FC<Props> = ({ onSubmit }) => {
             selectedCity ? { value: selectedCity, label: selectedCity } : null
           }
           onChange={handleCityChange}
-          isDisabled={!selectedState}
+          isDisabled={!selectedState && existStates}
         />
       </div>
       <div>
