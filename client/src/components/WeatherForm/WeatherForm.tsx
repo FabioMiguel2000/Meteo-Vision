@@ -1,6 +1,5 @@
 // src/components/TemperatureForm.tsx
 import React, { useState, useEffect } from "react";
-import Select from "react-select";
 import {
   ICountry,
   IState,
@@ -25,10 +24,7 @@ const WeatherForm: React.FC<Props> = ({ onSubmit }) => {
   const [cities, setCities] = useState<ICity[]>([]);
   const [selectedCountry, setSelectedCountry] = useState<string>("");
   const [selectedState, setSelectedState] = useState<string>("");
-  const [selectedCountryIsoCode, setSelectedCountryIsoCode] =
-    useState<string>("");
   const [existStates, setExistStates] = useState<boolean>(true);
-  const [selectedStateIsoCode, setSelectedStateIsoCode] = useState<string>("");
   const [selectedCity, setSelectedCity] = useState<string>("");
   const [longitude, setLongitude] = useState<number>(0);
   const [latitude, setLatitude] = useState<number>(0);
@@ -40,57 +36,45 @@ const WeatherForm: React.FC<Props> = ({ onSubmit }) => {
   }, []);
 
   useEffect(() => {
-    if (selectedCountryIsoCode) {
-      setStates(State.getStatesOfCountry(selectedCountryIsoCode) as IState[]);
-      if (State.getStatesOfCountry(selectedCountryIsoCode).length === 0) {
+    setExistStates(true);
+    if (selectedCountry) {
+      setStates(State.getStatesOfCountry(selectedCountry) as IState[]);
+      setCities([]);
+      if (State.getStatesOfCountry(selectedCountry).length === 0) {
         setExistStates(false);
       }
     }
-  }, [selectedCountryIsoCode]);
+  }, [selectedCountry]);
 
   useEffect(() => {
-    if (!existStates) {
-      setCities(City.getCitiesOfCountry(selectedCountryIsoCode) as ICity[]);
-      return;
-    }
-
-    if (selectedStateIsoCode) {
+    if (selectedState) {
+      setExistStates(true);
       setCities(
-        City.getCitiesOfState(
-          selectedCountryIsoCode,
-          selectedStateIsoCode
-        ) as ICity[]
+        City.getCitiesOfState(selectedCountry, selectedState) as ICity[]
       );
     }
-  }, [selectedStateIsoCode, selectedCountryIsoCode, existStates]);
+  }, [selectedState]);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleCountryChange = (option: any) => {
-    setSelectedCountry(option.value);
-    setSelectedCountryIsoCode(option.isoCode);
-    setExistStates(true);
-    setSelectedStateIsoCode("");
+  const handleCountryChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedCountry(event.target.value);
     setSelectedState("");
     setSelectedCity("");
-    setLatitude(option.latitude);
-    setLongitude(option.longitude);
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleStateChange = (option: any) => {
-    setExistStates(true);
-    setSelectedState(option.value);
-    setSelectedStateIsoCode(option.isoCode);
-    setLatitude(option.latitude);
-    setLongitude(option.longitude);
+  const handleStateChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedState(event.target.value);
     setSelectedCity("");
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleCityChange = (option: any) => {
-    setSelectedCity(option.value);
-    setLatitude(option.latitude);
-    setLongitude(option.longitude);
+  const handleCityChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedOption = cities.find(
+      (city) => city.name === event.target.value
+    );
+    setSelectedCity(event.target.value);
+    if (selectedOption) {
+      setLongitude(Number(selectedOption.longitude));
+      setLatitude(Number(selectedOption.latitude));
+    }
   };
 
   const handleSubmit = (event: React.FormEvent) => {
@@ -102,74 +86,73 @@ const WeatherForm: React.FC<Props> = ({ onSubmit }) => {
     <form onSubmit={handleSubmit}>
       <div className="w-full grid grid-cols-6 gap-4">
         <div className="flex flex-col items-start gap-1 col-span-2">
-          <label className="text-sm font-bold"
-          htmlFor="country">Country:</label>
-          <Select
-            className="w-full text-gray-900 text-start"
-            placeholder="Select a country"
+          <label htmlFor="country" className="mb-1 text-sm font-bold">
+            Country:
+          </label>
+          <select
             id="country"
-            aria-label="Country"
-            options={countries.map((country) => ({
-              value: country.name,
-              label: country.name,
-              isoCode: country.isoCode,
-              latitude: country.latitude,
-              longitude: country.longitude,
-            }))}
-            value={
-              selectedCountry
-                ? { value: selectedCountry, label: selectedCountry }
-                : null
-            }
+            className="w-full p-2 border bg-white border-gray-300 rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            value={selectedCountry}
             onChange={handleCountryChange}
-          />
+          >
+            <option value="">Select Country</option>
+            {countries.map((country) => (
+              <option key={country.isoCode} value={country.isoCode}>
+                {country.name}
+              </option>
+            ))}
+          </select>
         </div>
         <div className="flex flex-col items-start gap-1 col-span-2">
-          <label className="text-sm font-bold"
-          htmlFor="state">State:</label>
-          <Select
-            className="w-full text-gray-900 text-start"
-            placeholder="Select a state"
+          <label htmlFor="state" className="mb-1 text-sm font-bold">
+            State:
+          </label>
+          <select
             id="state"
-            options={states.map((state) => ({
-              value: state.name,
-              label: state.name,
-              isoCode: state.isoCode,
-              latitude: state.latitude,
-              longitude: state.longitude,
-            }))}
-            value={
-              selectedState
-                ? { value: selectedState, label: selectedState }
-                : null
-            }
+            className={`w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+              selectedCountry
+                ? "bg-white text-gray-700 border-gray-300"
+                : "bg-gray-100 text-gray-400 border-gray-200"
+            }`}
+            value={selectedState}
             onChange={handleStateChange}
-            isDisabled={!selectedCountry}
-          />
+            disabled={!selectedCountry}
+          >
+            <option value="">Select State</option>
+            {states.map((state) => (
+              <option key={state.isoCode} value={state.isoCode}>
+                {state.name}
+              </option>
+            ))}
+          </select>
         </div>
         <div className="flex flex-col items-start gap-1 col-span-2">
-          <label className="text-sm font-bold"
-          htmlFor="city">City:</label>
-          <Select
-            className="w-full text-gray-900 text-start"
-            placeholder="Select a city"
+          <label htmlFor="city" className="mb-1 text-sm font-bold">
+            City:
+          </label>
+          <select
             id="city"
-            options={cities.map((city) => ({
-              value: city.name,
-              label: city.name,
-              latitude: city.latitude,
-              longitude: city.longitude,
-            }))}
-            value={
-              selectedCity ? { value: selectedCity, label: selectedCity } : null
-            }
+            className={`w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+              selectedState || !existStates
+                ? "bg-white text-gray-700 border-gray-300"
+                : "bg-gray-100 text-gray-400 border-gray-200"
+            }`}
+            value={selectedCity}
             onChange={handleCityChange}
-            isDisabled={!selectedState && existStates}
-          />
+            disabled={!selectedState && existStates}
+          >
+            <option value="">Select City</option>
+            {cities.map((city) => (
+              <option key={city.name} value={city.name}>
+                {city.name}
+              </option>
+            ))}
+          </select>
         </div>
         <div className="flex flex-col items-start col-span-3 gap-1">
-          <label className="text-sm font-bold"
-          htmlFor="start-date">Start Date:</label>
+          <label className="text-sm font-bold" htmlFor="start-date">
+            Start Date:
+          </label>
           <input
             className="w-full p-2 border border-gray-300 rounded-md text-gray-600 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
             id="start-date"
@@ -179,8 +162,9 @@ const WeatherForm: React.FC<Props> = ({ onSubmit }) => {
           />
         </div>
         <div className="flex flex-col items-start col-span-3 gap-1">
-          <label className="text-sm font-bold"
-          htmlFor="end-date">End Date:</label>
+          <label className="text-sm font-bold" htmlFor="end-date">
+            End Date:
+          </label>
           <input
             className="w-full p-2 border border-gray-300 rounded-md text-gray-600 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
             id="end-date"
