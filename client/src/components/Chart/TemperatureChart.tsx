@@ -1,4 +1,3 @@
-// src/components/TemperatureChart.tsx
 import React from "react";
 import { Line } from "react-chartjs-2";
 import "chart.js/auto";
@@ -28,7 +27,7 @@ function formatDateForAxis(dateStr: string): string {
   return date.toLocaleDateString('en-GB', {
     day: '2-digit',
     month: 'short',
-  });
+  }).replace(" ", " "); 
 }
 
 const TemperatureChart: React.FC<TemperatureChartProps> = ({ data }) => {
@@ -47,6 +46,9 @@ const TemperatureChart: React.FC<TemperatureChartProps> = ({ data }) => {
     plugins: {
       legend: {
         position: "top",
+        labels: {
+          color: "#ffffff"
+        }
       },
       tooltip: {
         callbacks: {
@@ -64,12 +66,26 @@ const TemperatureChart: React.FC<TemperatureChartProps> = ({ data }) => {
         title: {
           display: true,
           text: "Time",
+          color: "#ffffff"  
+        },
+        ticks: {
+          color: "#ffffff"  
+        },
+        grid: {
+          color: "#444444"  
         }
       },
       y: {
         title: {
           display: true,
           text: "Temperature (°C)",
+          color: "#ffffff"  
+        },
+        ticks: {
+          color: "#ffffff" 
+        },
+        grid: {
+          color: "#444444"  
         },
         beginAtZero: true,
       },
@@ -82,8 +98,10 @@ const TemperatureChart: React.FC<TemperatureChartProps> = ({ data }) => {
       {
         label: "Temperature",
         data: temperature_2m,
-        borderColor: "rgb(255, 99, 132)",
-        backgroundColor: "rgba(255, 99, 132, 0.5)",
+        borderColor: "rgb(10, 132, 255)",  
+        backgroundColor: "rgba(10, 132, 255, 0.5)",  
+        pointBackgroundColor: "#ffffff",  
+        pointBorderColor: "rgb(10, 132, 255)"  
       },
     ],
   };
