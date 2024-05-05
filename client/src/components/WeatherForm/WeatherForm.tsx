@@ -59,11 +59,25 @@ const WeatherForm: React.FC<Props> = ({ onSubmit }) => {
     setSelectedCountry(event.target.value);
     setSelectedState("");
     setSelectedCity("");
+    const selectedOption = countries.find(
+      (country) => country.isoCode === event.target.value
+    );
+    if (selectedOption) {
+      setLongitude(Number(selectedOption.longitude));
+      setLatitude(Number(selectedOption.latitude));
+    }
   };
 
   const handleStateChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedState(event.target.value);
     setSelectedCity("");
+    const selectedOption = states.find(
+      (state) => state.isoCode === event.target.value
+    );
+    if (selectedOption) {
+      setLongitude(Number(selectedOption.longitude));
+      setLatitude(Number(selectedOption.latitude));
+    }
   };
 
   const handleCityChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
