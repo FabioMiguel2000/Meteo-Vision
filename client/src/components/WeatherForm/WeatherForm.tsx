@@ -188,7 +188,17 @@ const WeatherForm: React.FC<Props> = ({ onSubmit }) => {
           />
         </div>
         <button
-          className="flex w-full col-span-6 mt-6 justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          className={`flex w-full col-span-6 mt-6 justify-center rounded-md px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2
+            ${
+              !(
+                longitude !== 0 &&
+                latitude !== 0 &&
+                startDate !== "" &&
+                endDate !== ""
+              )
+                ? "bg-gray-400 hover:bg-gray-400 hover:border-gray-400" 
+                : "bg-indigo-600 hover:bg-indigo-500 focus-visible:outline-indigo-600" 
+            }`}
           type="submit"
           disabled={
             !(
