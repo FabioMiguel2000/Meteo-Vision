@@ -7,7 +7,7 @@ interface TemperatureData {
   temperature_2m: number[];
 }
 
-const OPEN_METEO_URL = "https://ensemble-api.open-meteo.com/v1/ensemble";
+const SERVER_URL = "http://localhost:3001/api/v1/weather";
 
 const WeatherContainer: React.FC = () => {
   const [temperatureData, setTemperatureData] =
@@ -19,12 +19,12 @@ const WeatherContainer: React.FC = () => {
     startDate: string,
     endDate: string
   ) => {
-    const url = `${OPEN_METEO_URL}?latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m&start_date=${startDate}&end_date=${endDate}&models=icon_seamless`;
+    const url = `${SERVER_URL}?latitude=${latitude}&longitude=${longitude}&start_date=${startDate}&end_date=${endDate}`;
     const response = await fetch(url);
     const data = await response.json();
     setTemperatureData({
-      time: data.hourly.time,
-      temperature_2m: data.hourly.temperature_2m,
+      time: data.temperature_data.time,
+      temperature_2m: data.temperature_data.temperature_2m,
     });
   };
 
