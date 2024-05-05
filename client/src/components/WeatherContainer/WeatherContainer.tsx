@@ -24,7 +24,7 @@ const WeatherContainer: React.FC = () => {
 
 
     return (
-        <div className='w-full m-auto'>
+        <div className='w-3/4 m-auto '>
             <WeatherForm onSubmit={handleFormSubmit}/>
             {temperatureData ? <TemperatureChart data={temperatureData} /> : <p>Loading...</p>}
         </div>
