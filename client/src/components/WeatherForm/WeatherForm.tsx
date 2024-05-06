@@ -14,7 +14,8 @@ interface Props {
     longitude: number,
     latitude: number,
     startDate: string,
-    endDate: string
+    endDate: string,
+    viewMode: string
   ) => void;
 }
 
@@ -30,6 +31,7 @@ const WeatherForm: React.FC<Props> = ({ onSubmit }) => {
   const [latitude, setLatitude] = useState<number>(0);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [viewMode, setViewMode] = useState("chart");
 
   useEffect(() => {
     setCountries(Country.getAllCountries());
@@ -93,7 +95,7 @@ const WeatherForm: React.FC<Props> = ({ onSubmit }) => {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    onSubmit(longitude, latitude, startDate, endDate);
+    onSubmit(longitude, latitude, startDate, endDate, viewMode);
   };
 
   return (
@@ -187,6 +189,23 @@ const WeatherForm: React.FC<Props> = ({ onSubmit }) => {
             onChange={(e) => setEndDate(e.target.value)}
           />
         </div>
+        <div className="flex flex-col items-start gap-1 col-span-6">
+          <label
+            htmlFor="view-mode"
+            className="mb-1 text-sm font-bold"
+          >
+            View Mode:
+          </label>
+          <select
+            id="view-mode"
+            className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-700 border-gray-300"
+            value={viewMode}
+            onChange={(e) => setViewMode(e.target.value)}
+          >
+            <option value="chart">Chart View</option>
+            <option value="table">Table View</option>
+          </select>
+        </div>
         <button
           className={`flex w-full mt-6 col-span-6 justify-center rounded-md px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2
             ${
@@ -196,8 +215,8 @@ const WeatherForm: React.FC<Props> = ({ onSubmit }) => {
                 startDate !== "" &&
                 endDate !== ""
               )
-                ? "bg-gray-400 hover:bg-gray-400 hover:border-gray-400" 
-                : "bg-indigo-600 hover:bg-indigo-500 focus-visible:outline-indigo-600" 
+                ? "bg-gray-400 hover:bg-gray-400 hover:border-gray-400"
+                : "bg-indigo-600 hover:bg-indigo-500 focus-visible:outline-indigo-600"
             }`}
           type="submit"
           disabled={

@@ -12,15 +12,16 @@ interface TemperatureData {
 const SERVER_URL = "http://localhost:3001/api/v1/weather";
 
 const WeatherContainer: React.FC = () => {
-  const [temperatureData, setTemperatureData] =
-    useState<TemperatureData | null>(null);
+  const [temperatureData, setTemperatureData] = useState<TemperatureData | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedView, setSelectedView] = useState('chart'); // This state now tracks the view mode
 
   const handleFormSubmit = async (
     longitude: number,
     latitude: number,
     startDate: string,
-    endDate: string
+    endDate: string,
+    viewMode: string // Accept viewMode as an argument
   ) => {
     const url = `${SERVER_URL}?latitude=${latitude}&longitude=${longitude}&start_date=${startDate}&end_date=${endDate}`;
     const response = await fetch(url);
@@ -29,6 +30,7 @@ const WeatherContainer: React.FC = () => {
       time: data.temperature_data.time,
       temperature_2m: data.temperature_data.temperature_2m,
     });
+    setSelectedView(viewMode); // Set the view mode for the dialog
     setIsDialogOpen(true);
   };
 
@@ -43,10 +45,9 @@ const WeatherContainer: React.FC = () => {
       <Dialog isOpen={isDialogOpen} onClose={handleClose}>
         <div className="h-full flex flex-col justify-center">
           {temperatureData ? (
-            // <TemperatureChart data={temperatureData} />
-            <TemperatureTable data={temperatureData} />
+            selectedView === 'chart' ? <TemperatureChart data={temperatureData} /> : <TemperatureTable data={temperatureData} />
           ) : (
-            "Loading chart..."
+            "Loading..."
           )}
         </div>
       </Dialog>
