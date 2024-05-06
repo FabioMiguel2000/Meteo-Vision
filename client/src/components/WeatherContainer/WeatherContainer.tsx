@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import TemperatureChart from "../Chart/TemperatureChart";
 import WeatherForm from "../WeatherForm/WeatherForm";
+import Dialog from "../Dialog/Dialog"; 
 
 interface TemperatureData {
   time: string[];
@@ -10,15 +11,10 @@ interface TemperatureData {
 const SERVER_URL = "http://localhost:3001/api/v1/weather";
 
 const WeatherContainer: React.FC = () => {
-  const [temperatureData, setTemperatureData] =
-    useState<TemperatureData | null>(null);
+  const [temperatureData, setTemperatureData] = useState<TemperatureData | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const handleFormSubmit = async (
-    longitude: number,
-    latitude: number,
-    startDate: string,
-    endDate: string
-  ) => {
+  const handleFormSubmit = async (longitude: number, latitude: number, startDate: string, endDate: string) => {
     const url = `${SERVER_URL}?latitude=${latitude}&longitude=${longitude}&start_date=${startDate}&end_date=${endDate}`;
     const response = await fetch(url);
     const data = await response.json();
@@ -26,18 +22,26 @@ const WeatherContainer: React.FC = () => {
       time: data.temperature_data.time,
       temperature_2m: data.temperature_data.temperature_2m,
     });
+    setIsDialogOpen(true); 
+  };
+
+  const handleClose = () => {
+    setIsDialogOpen(false); 
   };
 
   return (
-    <div className="w-3/4 m-auto">
+    <div className="w-3/4 m-auto flex flex-col justify-center h-screen">
       <WeatherForm onSubmit={handleFormSubmit} />
-      <div className="mt-5">
-        {temperatureData ? (
-          <TemperatureChart data={temperatureData} />
-        ) : (
-          <TemperatureChart data={{ time: [], temperature_2m: [] }} />
-        )}
-      </div>
+      {isDialogOpen && <div className="overlay" onClick={handleClose}></div>}
+      <Dialog isOpen={isDialogOpen} onClose={handleClose}>
+        <div className="h-full">
+          {temperatureData ? (
+            <TemperatureChart data={temperatureData} />
+          ) : (
+            "Loading chart..."
+          )}
+        </div>
+      </Dialog>
     </div>
   );
 };

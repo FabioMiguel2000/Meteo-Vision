@@ -98,7 +98,7 @@ const WeatherForm: React.FC<Props> = ({ onSubmit }) => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="w-full grid grid-cols-6 gap-4">
+      <div className="w-full grid grid-cols-6 gap-6">
         <div className="flex flex-col items-start gap-1 md:col-span-2 col-span-6">
           <label htmlFor="country" className="mb-1 text-sm font-bold">
             Country:
@@ -188,7 +188,7 @@ const WeatherForm: React.FC<Props> = ({ onSubmit }) => {
           />
         </div>
         <button
-          className={`flex w-full mt-1 col-span-6 justify-center rounded-md px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2
+          className={`flex w-full mt-6 col-span-6 justify-center rounded-md px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2
             ${
               !(
                 longitude !== 0 &&
