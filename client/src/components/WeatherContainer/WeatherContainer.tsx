@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import TemperatureChart from "../Chart/TemperatureChart";
 import WeatherForm from "../WeatherForm/WeatherForm";
 import Dialog from "../Dialog/Dialog";
+import TemperatureTable from "../Table/TemperatureTable";
 
 interface TemperatureData {
   time: string[];
@@ -40,9 +41,10 @@ const WeatherContainer: React.FC = () => {
       <WeatherForm onSubmit={handleFormSubmit} />
       {isDialogOpen && <div className="overlay" onClick={handleClose}></div>}
       <Dialog isOpen={isDialogOpen} onClose={handleClose}>
-        <div className="h-full">
+        <div className="h-full flex flex-col justify-center">
           {temperatureData ? (
-            <TemperatureChart data={temperatureData} />
+            // <TemperatureChart data={temperatureData} />
+            <TemperatureTable data={temperatureData} />
           ) : (
             "Loading chart..."
           )}
