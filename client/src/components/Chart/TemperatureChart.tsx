@@ -43,6 +43,7 @@ const TemperatureChart: React.FC<TemperatureChartProps> = ({ data }) => {
 
   const options: ChartOptions<"line"> = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: "top",
@@ -106,7 +107,7 @@ const TemperatureChart: React.FC<TemperatureChartProps> = ({ data }) => {
     ],
   };
 
-  return <Line data={chartData} options={options} />;
+  return <Line data={chartData} options={options} className="w-full"/>;
 };
 
 export default TemperatureChart;

@@ -99,7 +99,7 @@ const WeatherForm: React.FC<Props> = ({ onSubmit }) => {
   return (
     <form onSubmit={handleSubmit}>
       <div className="w-full grid grid-cols-6 gap-4">
-        <div className="flex flex-col items-start gap-1 col-span-2">
+        <div className="flex flex-col items-start gap-1 md:col-span-2 col-span-6">
           <label htmlFor="country" className="mb-1 text-sm font-bold">
             Country:
           </label>
@@ -117,7 +117,7 @@ const WeatherForm: React.FC<Props> = ({ onSubmit }) => {
             ))}
           </select>
         </div>
-        <div className="flex flex-col items-start gap-1 col-span-2">
+        <div className="flex flex-col items-start gap-1 md:col-span-2 col-span-6">
           <label htmlFor="state" className="mb-1 text-sm font-bold">
             State:
           </label>
@@ -140,7 +140,7 @@ const WeatherForm: React.FC<Props> = ({ onSubmit }) => {
             ))}
           </select>
         </div>
-        <div className="flex flex-col items-start gap-1 col-span-2">
+        <div className="flex flex-col items-start gap-1 md:col-span-2 col-span-6">
           <label htmlFor="city" className="mb-1 text-sm font-bold">
             City:
           </label>
@@ -163,7 +163,7 @@ const WeatherForm: React.FC<Props> = ({ onSubmit }) => {
             ))}
           </select>
         </div>
-        <div className="flex flex-col items-start col-span-3 gap-1">
+        <div className="flex flex-col items-start md:col-span-3 col-span-6 gap-1">
           <label className="text-sm font-bold" htmlFor="start-date">
             Start Date:
           </label>
@@ -175,7 +175,7 @@ const WeatherForm: React.FC<Props> = ({ onSubmit }) => {
             onChange={(e) => setStartDate(e.target.value)}
           />
         </div>
-        <div className="flex flex-col items-start col-span-3 gap-1">
+        <div className="flex flex-col items-start md:col-span-3 col-span-6 gap-1">
           <label className="text-sm font-bold" htmlFor="end-date">
             End Date:
           </label>
